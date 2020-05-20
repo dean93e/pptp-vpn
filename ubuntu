@@ -1,0 +1,30 @@
+sudo apt-get install pptpd -y
+
+sudo nano /etc/ppp/pptpd-options
+     /* change #ms-dns 10.0.0.1 to "ms-dns 8.8.8.8" google dns */
+     /* change #ms-dns 10.0.0.2 to "ms-dns 1.1.1.1" cloudflare dns */
+  
+sudo nano /etc/ppp/chap-secrets
+     /* create "username"   "pptpd"  "password"  "ip address" */
+
+ifconfig       // check ip public addres
+
+sudo nano /etc/pptpd.conf
+     /* change host #localip 192.168.0.1 to "ip public, etc: 94.237.3.12 */
+     /* change client #remoteip 192.168.1.234-238,192.168.1.245 to "94.237.3.1-254" */
+     
+sudo nano /etc/sysctl.conf
+     /* enable ip forwarding, "net.ipv4.ip_forward = 1" */
+
+sudo sysctl -p
+
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE   // configure firewall for ip masquerading
+
+sudo service pptpd start
+
+sudo systemctl enable pptpd
+
+/* install pptp vpn client  */
+sudo apt-get install pptp-linux network-manager-pptp network-manager-pptp-gnome
+
+
