@@ -1,3 +1,6 @@
+// START
+
+
 sudo apt-get install pptpd -y
 
 sudo nano /etc/ppp/pptpd-options
@@ -10,13 +13,19 @@ sudo nano /etc/ppp/chap-secrets
 ifconfig       // check ip public addres
 
 sudo nano /etc/pptpd.conf
-     /* change host #localip 192.168.0.1 to "ip public, etc: 94.237.3.12 */
-     /* change client #remoteip 192.168.1.234-238,192.168.1.245 to "94.237.3.1-254" */
+     /* change host  "#localip 192.168.0.1"  to ip public, etc:  "localip 94.237.69.160"  */
+     /* change client  "#remoteip 192.168.1.234-238,192.168.1.245" to 100 clients, etc:  "remoteip 94.237.69.1-101"  */
      
 sudo nano /etc/sysctl.conf
      /* enable ip forwarding, "net.ipv4.ip_forward = 1" */
 
 sudo sysctl -p
+
+/etc/init.d/pptpd restart
+
+sudo nano /etc/rc.local
+     /* add to before exit 0  "iptables -t nat -A POSTROUTING -s 94.237.69.160/24 -o eth0 -j MASQUERADE"  */
+     /* add to before exit 0  "iptables -A FORWARD -p tcp --syn -s 94.237.69.160/24 -j TCPMSS --set-mss 1356"  */
 
 sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE   // configure firewall for ip masquerading
 
@@ -28,3 +37,4 @@ sudo systemctl enable pptpd
 sudo apt-get install pptp-linux network-manager-pptp network-manager-pptp-gnome
 
 
+// END
